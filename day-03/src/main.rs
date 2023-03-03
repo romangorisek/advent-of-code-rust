@@ -30,7 +30,7 @@ fn shared_item(line: &str) -> Option<char> {
     None
 }
 
-fn shared_item_for_group(lines: [&str; 3]) -> Option<char> {
+fn shared_item_for_group(lines: &[String; 3]) -> Option<char> {
     for char in lines[0].chars() {
         if lines[1].contains(char) && lines[2].contains(char) {
             return Some(char);
@@ -43,14 +43,13 @@ fn main() {
     let lines = read_lines("./input.txt".to_string());
     let mut sum = 0;
     let mut count = 0;
-    let mut batch = ["", "", ""];
+    let mut batch = ["".to_string(), "".to_string(), "".to_string()];
     for line in lines {
-        let curr_line = &line.unwrap();
-        batch[count] = curr_line;
+        batch[count] = line.unwrap();
         count += 1;
 
-        if (count == 3) {
-            let c = shared_item_for_group(batch);
+        if count == 3 {
+            let c = shared_item_for_group(&batch);
             let prio = priority(c.unwrap());
             sum += prio;
             count = 0;
