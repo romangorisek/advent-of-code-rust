@@ -1,3 +1,4 @@
+use regex::Regex;
 use std::{
     fs::File,
     io::{self, BufRead, BufReader},
@@ -10,27 +11,27 @@ fn read_lines(filename: String) -> io::Lines<BufReader<File>> {
     return io::BufReader::new(file).lines();
 }
 
-fn fully_contains(line: String) -> bool {
-    let elves: Vec<&str> = line.split(",").collect();
-    let mut elf1 = elves[0].split("-");
-    let mut elf2 = elves[1].split("-");
-    let elf1_min = elf1.nth(0).unwrap();
-    let elf1_max = elf1.nth(2).unwrap();
-    let elf2_min = elf2.nth(0).unwrap();
-    let elf2_max = elf2.nth(2).unwrap();
+fn fully_contains(line: &str) -> bool {
+    let seperator = Regex::new(r"([-,])").expect("Invalid regex");
+    let splits: Vec<usize> = seperator
+        .split(line)
+        .into_iter()
+        .map(|i| i.parse::<usize>().unwrap())
+        .collect();
 
-    println!("{:?}", line);
-    println!("{}-{},{}-{}", elf1_min, elf1_max, elf2_min, elf2_max);
-
-    (elf1_min <= elf2_min && elf1_max >= elf2_max) || (elf2_min <= elf1_min && elf2_max >= elf1_max)
+    (splits[0] <= splits[2] && splits[1] >= splits[3])
+        || (splits[2] <= splits[0] && splits[3] >= splits[1])
 }
 
 fn main() {
     let lines = read_lines("./input.txt".to_string());
     let mut sum = 0;
+
     for line in lines {
-        if fully_contains(line.unwrap()) {
-            sum += 0;
+        let i = line.as_ref().unwrap();
+        if fully_contains(i) {
+            // println!("{} ----", i);
+            sum += 1;
         }
     }
     println!("{}", sum);
