@@ -19,8 +19,7 @@ fn fully_contains(line: &str) -> bool {
         .map(|i| i.parse::<usize>().unwrap())
         .collect();
 
-    (splits[0] <= splits[2] && splits[1] >= splits[3])
-        || (splits[2] <= splits[0] && splits[3] >= splits[1])
+    !(splits[2] > splits[1]) && !(splits[3] < splits[0])
 }
 
 fn main() {
