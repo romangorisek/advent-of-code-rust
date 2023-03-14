@@ -25,6 +25,15 @@ fn move_crates(stacks: &mut [Vec<&str>; 9], amount: usize, from: usize, to: usiz
     }
 }
 
+fn move_crates_2(stacks: &mut [Vec<&str>; 9], amount: usize, from: usize, to: usize) {
+    let len = stacks[from].len() - amount;
+    let pack = stacks[from][len..].to_vec();
+    stacks[from] = stacks[from][..len].to_vec();
+    for tmp in pack {
+        stacks[to].push(tmp);
+    }
+}
+
 fn print(stacks: &mut [Vec<&str>; 9]) {
     for i in 0..9 {
         let tmp = stacks[i].pop().unwrap();
@@ -50,7 +59,7 @@ fn main() {
     for line in lines {
         let i = line.as_ref().unwrap();
         let moves = parse_moves(i);
-        move_crates(&mut stacks, moves[0], moves[1] - 1, moves[2] - 1);
+        move_crates_2(&mut stacks, moves[0], moves[1] - 1, moves[2] - 1);
     }
 
     print(&mut stacks);
