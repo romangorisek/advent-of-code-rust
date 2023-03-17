@@ -1,18 +1,40 @@
-use std::{
-    fs::File,
-    io::{self, BufRead, BufReader},
-};
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::prelude::*;
 
-fn read_lines(filename: String) -> io::Lines<BufReader<File>> {
-    // Open the file in read-only mode.
-    let file = File::open(filename).unwrap();
-    // Read the file line by line, and return an iterator of the lines of the file.
-    return io::BufReader::new(file).lines();
+fn read_file(filename: String) -> String {
+    let mut file = File::open(filename).expect("File not found");
+    let mut data = String::new();
+    file.read_to_string(&mut data).unwrap();
+    data
 }
 
+fn start_of_packet(input: &String) -> Option<usize> {
+    let mut slice = HashMap::new();
+    let byte_input = input.as_bytes();
+
+    for i in 13..input.len() {
+        println!("{i}");
+        println!("{}", &input[i - 10..i + 1]);
+        slice.insert(byte_input[i] as char, true);
+        slice.insert(byte_input[i - 1] as char, true);
+        slice.insert(byte_input[i - 2] as char, true);
+        slice.insert(byte_input[i - 3] as char, true);
+
+        println!("{:?}", slice);
+        if slice.len() == 4 {
+            return Some(i + 1);
+        } else {
+            slice.clear();
+        }
+        println!("{:?}", slice);
+    }
+
+    None
+}
 
 fn main() {
-    let lines = read_lines("./input.txt".to_string());
-    
-    println!("{:?}", lines);
+    let input = read_file("./input.txt".to_string());
+    let pos = start_of_packet(&input).unwrap();
+    println!("{pos}");
 }
